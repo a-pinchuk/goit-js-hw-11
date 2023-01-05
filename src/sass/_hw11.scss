@@ -1,0 +1,132 @@
+$color-shadow: #BABECC;
+$color-white: #FFF;
+$ruler: 16px;
+
+body {
+    color: #323232;
+    background-color: #DDD0C8;
+}
+
+$ruler: 16px;
+$color-red: #AE1100;
+$color-bg: #EBECF0;
+$color-shadow: #BABECC;
+$color-white: #FFF;
+
+body, html {
+  background-color:$color-bg;
+}
+
+body, p, input, select, textarea, button {
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: -0.2px;
+    font-size: $ruler;
+}
+
+div, p {
+  color: $color-shadow;
+  text-shadow: 1px 1px 1px $color-white;
+}
+
+
+form {
+  padding: $ruler;
+  width: $ruler*30;
+}
+
+.segment {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+  border-bottom: 2px solid rgb(185, 191, 218);;
+}
+
+button, input {
+  border: 0;
+  outline: 0;
+  font-size: $ruler;
+  border-radius: $ruler*20;
+  padding: $ruler;
+  background-color:$color-bg;
+  text-shadow: 1px 1px 0 $color-white;
+}
+
+
+
+input {
+  margin-right: $ruler/2;
+  box-shadow:  inset 2px 2px 5px $color-shadow, inset -5px -5px 10px $color-white;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &:focus {
+    box-shadow:  inset 1px 1px 2px $color-shadow, inset -1px -1px 2px $color-white;
+  }
+}
+
+button {
+  color:#61677C;
+  font-weight: bold;
+  box-shadow: -5px -5px 20px $color-white,  5px 5px 20px $color-shadow;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  font-weight: 600;
+  
+  &:hover {
+    box-shadow: -2px -2px 5px $color-white, 2px 2px 5px $color-shadow;
+  }
+  
+  &:active {
+    box-shadow: inset 1px 1px 2px $color-shadow, inset -1px -1px 2px $color-white;
+  }
+  
+}
+
+
+.info {
+  display: flex;
+  max-width: 100%;
+}
+
+.info-item:not(:last-child) {
+  
+  margin-right: 20px;
+}
+
+.gallery {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap : 20px
+}
+
+.photo-card {
+   width: calc((100% / 4) - 60px);
+}
+
+img {
+  display: block;
+  height: 300px;
+  width: 100%;
+}
+
+.load__more {
+  display: block;
+  margin: 25px auto;
+}
+
+.search-form {
+  display: flex;
+}
+
+#loading{
+  text-align : center;
+  border: 2px solid rgb(185, 191, 218);
+  padding: 1rem 0;
+  width : 100%;
+}
