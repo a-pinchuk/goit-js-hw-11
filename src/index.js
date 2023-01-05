@@ -15,6 +15,8 @@ const ref = {
   loader: document.getElementById('loading'),
 };
 
+const galleryBox = new SimpleLightbox('.gallery a');
+
 // ref.hideButton.addEventListener('click', onLoadMore);
 ref.form.addEventListener('submit', fetchAndRenderImg);
 
@@ -44,7 +46,7 @@ async function fetchAndRenderImg(e) {
     data.forEach(el => {
       renderImg(el);
     });
-    galleryBox = new SimpleLightbox('.gallery a').refresh();
+    galleryBox.refresh();
     ref.loader.style.display = 'block';
   } catch (error) {
     console.log(error);
@@ -117,7 +119,7 @@ async function onLoadMore() {
       top: cardHeight * 2,
       behavior: 'smooth',
     });
-    galleryBox = new SimpleLightbox('.gallery a').refresh();
+    galleryBox.refresh();
     if (page > totalPages) {
       ref.loader.style.display = 'none';
       Notify.failure(
