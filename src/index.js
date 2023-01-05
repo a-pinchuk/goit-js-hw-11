@@ -25,6 +25,7 @@ async function fetchAndRenderImg(e) {
   textContent = e.currentTarget.searchQuery.value;
   clearData();
   if (textContent === '') {
+    clearData();
     return Notify.warning(
       'Sorry, there are no images matching your search query. Please try again.'
     );
@@ -43,7 +44,7 @@ async function fetchAndRenderImg(e) {
     data.forEach(el => {
       renderImg(el);
     });
-    simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+    galleryBox = new SimpleLightbox('.gallery a').refresh();
     ref.loader.style.display = 'block';
   } catch (error) {
     console.log(error);
@@ -95,7 +96,12 @@ function renderImg(images) {
 
 async function onLoadMore() {
   page += 1;
-  simpleLightBox.destroy();
+  galleryBox.destroy();
+
+  if (textContent === '') {
+    ref.loader.style.display = 'none';
+    return clearData();
+  }
   try {
     const image = await fetchImg(textContent);
     const data = await image.data.hits;
@@ -111,7 +117,7 @@ async function onLoadMore() {
       top: cardHeight * 2,
       behavior: 'smooth',
     });
-    simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+    galleryBox = new SimpleLightbox('.gallery a').refresh();
     if (page > totalPages) {
       ref.loader.style.display = 'none';
       Notify.failure(
@@ -127,21 +133,23 @@ function clearData() {
   ref.gallery.innerHTML = '';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  let options = {
+const observer = new IntersectionObserver(
+  callbackObserver,
+  getOptionObserver()
+);
+function getOptionObserver() {
+  return {
     root: null,
     rootMargin: '0px',
     threshold: 0.25,
   };
-
-  function handleIntersect(entries, observer) {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        onLoadMore();
-      }
-    });
-  }
-
-  let observer = new IntersectionObserver(handleIntersect, options);
-  observer.observe(ref.loader);
-});
+}
+function callbackObserver(entries, observer) {
+  /* Content excerpted, show below */
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      onLoadMore();
+    }
+  });
+}
+observer.observe(ref.loader);
