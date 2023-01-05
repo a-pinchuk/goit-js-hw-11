@@ -96,7 +96,7 @@ function renderImg(images) {
 
 async function onLoadMore() {
   page += 1;
-  galleryBox.destroy();
+  // galleryBox.destroy();
 
   if (textContent === '') {
     ref.loader.style.display = 'none';
