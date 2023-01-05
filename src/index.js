@@ -1,11 +1,12 @@
-import axios from 'axios';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { fetchImg } from './js/fetch';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 let page = 1;
 let textContent = '';
 
+const galleryBox = new SimpleLightbox('.gallery a');
 const ref = {
   form: document.querySelector('.search-form'),
   input: document.querySelector('input'),
@@ -15,14 +16,11 @@ const ref = {
   loader: document.getElementById('loading'),
 };
 
-const galleryBox = new SimpleLightbox('.gallery a');
-
-// ref.hideButton.addEventListener('click', onLoadMore);
 ref.form.addEventListener('submit', fetchAndRenderImg);
-
 ref.loader.style.display = 'none';
 
 async function fetchAndRenderImg(e) {
+  console.log('🚀 ~ fetchAndRenderImg');
   e.preventDefault();
   textContent = e.currentTarget.searchQuery.value;
   clearData();
@@ -33,7 +31,7 @@ async function fetchAndRenderImg(e) {
     );
   }
   try {
-    const image = await fetchImg(textContent);
+    const image = await fetchImg(textContent, page);
     const data = await image.data.hits;
 
     if (data.length === 0) {
@@ -51,21 +49,6 @@ async function fetchAndRenderImg(e) {
   } catch (error) {
     console.log(error);
   }
-}
-
-async function fetchImg(content) {
-  const searchParams = new URLSearchParams({
-    key: '32614243-5c13f08404019c5c5c85a7837',
-    q: content,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    per_page: 40,
-    page: page,
-  });
-  const baseUrl = 'https://pixabay.com/api/?';
-
-  return axios.get(`${baseUrl}${searchParams}`);
 }
 
 function renderImg(images) {
@@ -97,8 +80,8 @@ function renderImg(images) {
 }
 
 async function onLoadMore() {
+  console.log('🚀 ~ onLoadMore');
   page += 1;
-  // galleryBox.destroy();
 
   if (textContent === '') {
     ref.loader.style.display = 'none';
@@ -112,14 +95,9 @@ async function onLoadMore() {
     data.forEach(el => {
       renderImg(el);
     });
-    const { height: cardHeight } =
-      ref.gallery.firstElementChild.getBoundingClientRect();
-
-    window.scrollBy({
-      top: cardHeight * 2,
-      behavior: 'smooth',
-    });
+    smoothScroll();
     galleryBox.refresh();
+
     if (page > totalPages) {
       ref.loader.style.display = 'none';
       Notify.failure(
@@ -129,6 +107,16 @@ async function onLoadMore() {
   } catch (error) {
     console.log(error);
   }
+}
+
+function smoothScroll() {
+  const { height: cardHeight } =
+    ref.gallery.firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
 
 function clearData() {
@@ -147,7 +135,7 @@ function getOptionObserver() {
   };
 }
 function callbackObserver(entries, observer) {
-  /* Content excerpted, show below */
+  console.log('🚀 ~ callbackObserver');
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       onLoadMore();
