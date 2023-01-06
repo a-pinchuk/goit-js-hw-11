@@ -1,25 +1,25 @@
-export function renderImg(images, ref, data) {
-  const markup = data.map(() => {
+export function renderImg(ref, data) {
+  const markup = data.map(el => {
     return `<div class="photo-card">
-    <a href="${images.largeImageURL}">
-      <img src="${images.webformatURL}" alt="${images.tags}" loading="lazy" />
+    <a href="${el.largeImageURL}">
+      <img src="${el.webformatURL}" alt="${el.tags}" loading="lazy" />
     </a>
   <div class="info">
     <p class="info-item">
       <b>Likes:</b>
-      ${images.likes}
+      ${el.likes}
     </p>
     <p class="info-item">
       <b>Views: </b>
-      ${images.views}
+      ${el.views}
     </p>
     <p class="info-item">
       <b>Comments: </b>
-      ${images.comments}
+      ${el.comments}
     </p>
     <p class="info-item">
       <b>Downloads: </b>
-      ${images.downloads}
+      ${el.downloads}
     </p>
   </div>
 </div>`;

@@ -17,6 +17,11 @@ const ref = {
   loader: document.getElementById('loading'),
 };
 
+const observer = new IntersectionObserver(
+  callbackObserver,
+  getOptionObserver()
+);
+
 ref.form.addEventListener('submit', fetchAndRenderImg);
 ref.loader.style.display = 'none';
 
@@ -34,7 +39,6 @@ async function fetchAndRenderImg(e) {
   try {
     const image = await fetchImg(textContent, page);
     const data = await image.data.hits;
-
     if (data.length === 0) {
       return Notify.warning(
         'Sorry, there are no images matching your search query. Please try again.'
@@ -42,7 +46,7 @@ async function fetchAndRenderImg(e) {
     } else {
       Notify.success(`Hooray! We found ${image.data.totalHits} images.`);
     }
-    renderImg(el, ref, data);
+    renderImg(ref, data);
     galleryBox.refresh();
     ref.loader.style.display = 'block';
   } catch (error) {
@@ -52,17 +56,17 @@ async function fetchAndRenderImg(e) {
 
 async function onLoadMore() {
   page += 1;
+
   if (textContent === '') {
     ref.loader.style.display = 'none';
     return clearData();
   }
-
   try {
     const image = await fetchImg(textContent, page);
     const data = await image.data.hits;
     const totalPages = (await image.data.totalHits) / 40;
 
-    renderImg(el, ref, data);
+    renderImg(ref, data);
     smoothScroll();
     galleryBox.refresh();
 
@@ -77,7 +81,6 @@ async function onLoadMore() {
   }
 }
 
-//smoothScroll
 function smoothScroll() {
   const { height: cardHeight } =
     ref.gallery.firstElementChild.getBoundingClientRect();
@@ -92,11 +95,6 @@ function clearData() {
   ref.gallery.innerHTML = '';
 }
 
-//Unlimited scroll
-const observer = new IntersectionObserver(
-  callbackObserver,
-  getOptionObserver()
-);
 function getOptionObserver() {
   return {
     root: null,
