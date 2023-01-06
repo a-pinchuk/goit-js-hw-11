@@ -12,6 +12,5 @@ export async function fetchImg(content, page) {
     per_page: 40,
     page: page,
   });
-
   return axios.get(`${baseUrl}${searchParams}`);
 }

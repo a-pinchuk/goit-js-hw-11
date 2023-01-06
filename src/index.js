@@ -1,5 +1,6 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchImg } from './js/fetch';
+import { renderImg } from './js/renderHTML';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -20,8 +21,8 @@ ref.form.addEventListener('submit', fetchAndRenderImg);
 ref.loader.style.display = 'none';
 
 async function fetchAndRenderImg(e) {
-  console.log('🚀 ~ fetchAndRenderImg');
   e.preventDefault();
+  ref.loader.style.display = 'none';
   textContent = e.currentTarget.searchQuery.value;
   clearData();
   if (textContent === '') {
@@ -41,9 +42,7 @@ async function fetchAndRenderImg(e) {
     } else {
       Notify.success(`Hooray! We found ${image.data.totalHits} images.`);
     }
-    data.forEach(el => {
-      renderImg(el);
-    });
+    renderImg(el, ref, data);
     galleryBox.refresh();
     ref.loader.style.display = 'block';
   } catch (error) {
@@ -51,50 +50,19 @@ async function fetchAndRenderImg(e) {
   }
 }
 
-function renderImg(images) {
-  const markup = `<div class="photo-card">
-      <a href="${images.largeImageURL}">
-        <img src="${images.webformatURL}" alt="${images.tags}" loading="lazy" />
-      </a>
-    <div class="info">
-      <p class="info-item">
-        <b>Likes:</b>
-        ${images.likes}
-      </p>
-      <p class="info-item">
-        <b>Views: </b>
-        ${images.views}
-      </p>
-      <p class="info-item">
-        <b>Comments: </b>
-        ${images.comments}
-      </p>
-      <p class="info-item">
-        <b>Downloads: </b>
-        ${images.downloads}
-      </p>
-    </div>
-  </div>`;
-
-  ref.gallery.insertAdjacentHTML('beforeend', markup);
-}
-
 async function onLoadMore() {
-  console.log('🚀 ~ onLoadMore');
   page += 1;
-
   if (textContent === '') {
     ref.loader.style.display = 'none';
     return clearData();
   }
+
   try {
-    const image = await fetchImg(textContent);
+    const image = await fetchImg(textContent, page);
     const data = await image.data.hits;
     const totalPages = (await image.data.totalHits) / 40;
 
-    data.forEach(el => {
-      renderImg(el);
-    });
+    renderImg(el, ref, data);
     smoothScroll();
     galleryBox.refresh();
 
@@ -109,6 +77,7 @@ async function onLoadMore() {
   }
 }
 
+//smoothScroll
 function smoothScroll() {
   const { height: cardHeight } =
     ref.gallery.firstElementChild.getBoundingClientRect();
@@ -123,6 +92,7 @@ function clearData() {
   ref.gallery.innerHTML = '';
 }
 
+//Unlimited scroll
 const observer = new IntersectionObserver(
   callbackObserver,
   getOptionObserver()
@@ -135,7 +105,6 @@ function getOptionObserver() {
   };
 }
 function callbackObserver(entries, observer) {
-  console.log('🚀 ~ callbackObserver');
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       onLoadMore();
